@@ -1,0 +1,30 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: predictive-maintenance-backend
+    env: docker
+    rootDir: backend
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: ENVIRONMENT
+        value: production
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: "https://predictive-maintenance-frontend.onrender.com" # Will be updated automatically by Render if configured properly, but good to have a default placeholder
+      # DATABASE_URL is not provided here if using SQLite. If using PostgreSQL on Render, link the database.
+
+  # Frontend Static Site
+  - type: web
+    name: predictive-maintenance-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: "https://predictive-maintenance-backend.onrender.com/api/v1"
+      - key: VITE_WS_URL
+        value: "wss://predictive-maintenance-backend.onrender.com/api/v1/ws"
